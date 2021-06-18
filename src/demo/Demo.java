@@ -91,12 +91,14 @@ public class Demo {
 			
 			dataResult.printSchema();
 			
+			// print to console
 //			StreamingQuery query = dataResult.writeStream()
 //					.trigger(Trigger.ProcessingTime(10000))
 //					.outputMode("append")
 //					.format("console")
 //					.start();
 			
+			// print to parquet file
 			StreamingQuery query = dataResult.writeStream()
 		    .format("parquet")        // can be "orc", "json", "csv", etc.
 		    .option("checkpointLocation", "/home/trannguyenhan/dataset/data/result")
