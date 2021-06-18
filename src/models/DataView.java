@@ -2,17 +2,14 @@ package models;
 
 import java.io.Serializable;
 
-public class SuccessEvent implements Serializable{
+public class DataView implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private long timeCreate;
-	private String url;
 	private long guid;
 	
-	public SuccessEvent(long timeCreate, String url, long guid) {
-		super();
+	public DataView(long timeCreate, long guid) {
 		this.timeCreate = timeCreate;
-		this.url = url;
 		this.guid = guid;
 	}
 
@@ -22,14 +19,6 @@ public class SuccessEvent implements Serializable{
 	
 	public void setTimeCreate(long timeCreate) {
 		this.timeCreate = timeCreate;
-	}
-	
-	public String getUrl() {
-		return url;
-	}
-	
-	public void setUrl(String url) {
-		this.url = url;
 	}
 	
 	public long getGuid() {
@@ -42,6 +31,6 @@ public class SuccessEvent implements Serializable{
 	
 	@Override
 	public String toString() {
-		return guid + " " + timeCreate + " " + url;
+		return timeCreate + " " + guid;
 	}
 }
