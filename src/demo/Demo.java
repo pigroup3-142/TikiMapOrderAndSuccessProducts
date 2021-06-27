@@ -93,7 +93,7 @@ public class Demo {
 			
 			Dataset<Row> dataResult = spark.sql("select * from dataJoin where (guid, timeCreate) in ("
 					+ "select guid, max(timeCreate) from dataJoin group by guid)");
-//			
+			
 			dataResult.printSchema();
 			
 			// print to console
