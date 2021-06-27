@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.spark.api.java.function.MapFunction;
+import org.apache.spark.sql.AnalysisException;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoder;
 import org.apache.spark.sql.Encoders;
@@ -21,7 +22,7 @@ import org.json.simple.parser.ParseException;
 import models.DataEvent;
 
 public class Demo {
-	public static void main(String[] args) throws TimeoutException, StreamingQueryException, ParseException, IOException {
+	public static void main(String[] args) throws TimeoutException, StreamingQueryException, ParseException, IOException, AnalysisException {
 		try (SparkSession spark = SparkSession.builder().appName("Read kafka").getOrCreate()) {
 			Dataset<String> data = spark
 					.readStream()
@@ -86,9 +87,13 @@ public class Demo {
 			dataSuccessRow.createOrReplaceTempView("dataSuccess");
 			spark.sql("select dataSuccess.guid, dataSuccess.url, dataView.time_create, dataSuccess.timeCreate"
 					+ " from dataView inner join dataSuccess on dataView.guid = dataSuccess.guid").createOrReplaceTempView("dataJoin");
+					
+			spark.sql("select * from dataJoin where "
+					+ "time_create between timeCreate and timeCreate + 3600000").createOrReplaceTempView("dataJoin");
 			
-			Dataset<Row> dataResult = spark.sql("select * from dataJoin where time_create between timeCreate and timeCreate + 3600000");
-			
+			Dataset<Row> dataResult = spark.sql("select * from dataJoin where (guid, timeCreate) in ("
+					+ "select guid, max(timeCreate) from dataJoin group by guid)");
+//			
 			dataResult.printSchema();
 			
 			// print to console
@@ -106,8 +111,6 @@ public class Demo {
 		    .start();
 			
 			query.awaitTermination();
-			
-			
 		}
 	}
 	
